@@ -8,6 +8,7 @@ Este projeto é uma aplicação Flask que fornece uma API RESTful para o gerenci
 
 * **CRUD de Livros com Autenticação**: Crie, leia, atualize e delete livros usando a API REST. Operações de criação, atualização e exclusão exigem autenticação.
 * **Pesquisa Avançada**: Pesquise livros por título, autor, ano de publicação e gênero.
+* **Paginação de Resultados**: Navegue por grandes conjuntos de livros usando a paginação para limitar o número de resultados por página.
 * **Autenticação de Usuários**: Acesso controlado às operações de manipulação de livros através de autenticação básica HTTP.
 * **Armazenamento com SQLite**: Facilita o armazenamento e recuperação de dados de livros.
 * **Feedback ao Usuário**: Fornece respostas claras e informativas para as ações do usuário.
@@ -61,38 +62,37 @@ python app.py
 ### Endpoints da API
 
 * **POST /livro** (Protegido): Adiciona um novo livro. Requer autenticação. Exemplo de corpo da requisição: `{"titulo": "Novo Livro", "autor": "Autor"}`.
-* **GET /livros**: Retorna uma lista de todos os livros.
+* **GET /livros**: Retorna uma lista paginada de todos os livros. Parâmetros opcionais `pagina` e `tamanho_pagina` podem ser usados para navegar entre páginas.
 * **GET /livro/<id>**: Retorna detalhes de um livro específico.
-* **PUT /livro/<id>** (Protegido): Atualiza um livro existente. Requer autenticação. Exemplo de corpo da requisição: `{"titulo": "Livro Atualizado", "autor": "Autor Atualizado"}`.
+* **PUT /livro/<id>** (Protegido): Atualiza um livro existente. Requer autenticação. Exemplo de
+
+corpo da requisição: `{"titulo": "Livro Atualizado", "autor": "Autor Atualizado"}`.
 * **DELETE /livro/<id>** (Protegido): Deleta um livro específico. Requer autenticação.
 * **GET /pesquisar**: Pesquise livros fornecendo parâmetros opcionais como `titulo`, `autor`, `ano_publicacao` e `genero`. Exemplo: `GET /pesquisar?titulo=O Nome da Rosa&autor=Umberto Eco`.
 
+### Funcionalidade de Paginação
 
-### Testando a Funcionalidade de Pesquisa Avançada com Postman
+Utilize a paginação para gerenciar grandes conjuntos de dados, limitando o número de livros retornados por requisição e permitindo a navegação entre diferentes páginas de resultados.
 
-A funcionalidade de pesquisa avançada permite que você encontre livros com base em múltiplos critérios como título, autor, ano de publicação e gênero. Siga os passos abaixo para testar esta funcionalidade usando o Postman:
+**Exemplo de Requisição Paginada:**
 
-1. Abra o Postman e selecione o método de requisição para `GET`.
-2. Na barra de endereços do Postman, insira a URL do seu servidor local seguida pelo endpoint de pesquisa. Por exemplo: `http://localhost:5000/pesquisar`.
-3. Abaixo da barra de endereços, localize a seção `Params`. Aqui, você pode adicionar os parâmetros de consulta que deseja usar para filtrar sua pesquisa. Clique no botão `Add Param` e insira os detalhes:
-   - Em `KEY`, digite o campo pelo qual você deseja pesquisar (por exemplo, `titulo`, `autor`, `ano_publicacao`, `genero`).
-   - Em `VALUE`, digite o valor específico que você está buscando (por exemplo, `1984` para `titulo`, `George Orwell` para `autor`).
-4. Você pode adicionar múltiplos parâmetros de pesquisa clicando repetidamente em `Add Param` e preenchendo as chaves e valores correspondentes.
-5. Uma vez que todos os parâmetros estejam definidos, clique no botão `Send` para realizar a requisição.
-6. O Postman enviará a requisição ao seu servidor Flask, que processará a pesquisa com os critérios fornecidos. Os resultados filtrados serão exibidos no painel de resposta do Postman.
-7. Se nenhum livro corresponder aos critérios de pesquisa, você receberá uma lista vazia como resposta. Se houver correspondências, você verá os detalhes dos livros que atendem aos critérios especificados.
+```
+GET /livros?pagina=2&tamanho_pagina=5
+```
 
-**Exemplo de Uso:**
+Esta requisição retorna a segunda página de resultados, com 5 livros por página.
 
-Para pesquisar um livro com o título "1984" e autor "George Orwell", seus parâmetros no Postman ficarão assim:
+**Resposta da Paginação:**
 
-- **KEY**: `titulo` **VALUE**: `1984`
-- **KEY**: `autor` **VALUE**: `George Orwell`
+A resposta incluirá metadados da paginação, como `pagina`, `itens_por_pagina`, `total_itens` e `total_paginas`, além da lista de livros na página atual.
 
-A URL final no Postman parecerá com isso: `http://localhost:5000/pesquisar?titulo=1984&autor=George Orwell`
+### Testando a Funcionalidade de Paginação com Postman
 
-Após configurar, clique em `Send` e analise os livros retornados que correspondem aos seus parâmetros de pesquisa no painel de resposta do Postman.
+Para testar a paginação:
 
+1. Abra o Postman e crie uma nova requisição GET.
+2. Na barra de endereços do Postman, insira a URL de listagem de livros com os parâmetros de paginação. Por exemplo: `http://localhost:5000/livros?pagina=3&tamanho_pagina=10`.
+3. Envie a requisição e observe a resposta. Ela deve incluir uma lista de livros correspondente à página e tamanho de página solicitados, juntamente com informações sobre a paginação.
 
 ### Contribuindo
 
